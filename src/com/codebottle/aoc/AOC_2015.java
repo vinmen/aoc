@@ -3,6 +3,7 @@ package com.codebottle.aoc;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.*;
 
 public class AOC_2015 {
 
@@ -12,6 +13,7 @@ public class AOC_2015 {
 	public void run() {
 		day1();
 		day2();
+		day3();
 	}
 
 	public void day1() {
@@ -109,4 +111,86 @@ public class AOC_2015 {
 		}
 	}
 
+	public void day3() {
+
+		try {
+			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2015\\day3.txt";
+			String input = new String(Files.readAllBytes(Paths.get(input_file)));			
+			String out_1 = "";
+			String out_2 = "";
+			
+			// part 1
+
+			int x = 0;
+			int y = 0;
+			
+			Set<String> set = new HashSet<String>();
+			set.add("0,0");
+			
+			for(int i = 0; i < input.length(); i++) {
+				if(input.charAt(i) == '^')
+					y++;
+				else if(input.charAt(i) == '>')
+					x++;
+				else if(input.charAt(i) == '<')
+					x--;
+				else if(input.charAt(i) == 'v')
+					y--;
+				
+				if(! set.contains(String.valueOf(x) + "," + String.valueOf(y)))
+					set.add(String.valueOf(x) + "," + String.valueOf(y));
+			}
+			
+			out_1 = String.valueOf(set.size());
+			
+			//part 2
+			
+			int x1 = 0;
+			int y1 = 0;
+			int x2 = 0;
+			int y2 = 0;
+			boolean santa_flag = true;
+			
+			Set<String> set2 = new HashSet<String>();			
+			set2.add("0,0");			
+			
+			for(int i = 0; i < input.length(); i++) {
+				if(santa_flag) {					
+					if(input.charAt(i) == '^')
+						y1++;
+					else if(input.charAt(i) == '>')
+						x1++;
+					else if(input.charAt(i) == '<')
+						x1--;
+					else if(input.charAt(i) == 'v')
+						y1--;
+					
+					if(! set2.contains(String.valueOf(x1) + "," + String.valueOf(y1)))
+						set2.add(String.valueOf(x1) + "," + String.valueOf(y1));
+				}
+				else {
+					if(input.charAt(i) == '^')
+						y2++;
+					else if(input.charAt(i) == '>')
+						x2++;
+					else if(input.charAt(i) == '<')
+						x2--;
+					else if(input.charAt(i) == 'v')
+						y2--;
+					
+					if(! set2.contains(String.valueOf(x2) + "," + String.valueOf(y2)))
+						set2.add(String.valueOf(x2) + "," + String.valueOf(y2));				
+				}
+				
+				santa_flag = ! santa_flag;	
+			}
+			
+			out_2 = String.valueOf(set2.size());
+
+			System.out.println("Day3::Part1::" + out_1 + "::Part2::" + out_2);
+		} catch (Exception e) {
+			System.out.println("Error occured::" + e.getMessage());
+		}
+	}
+	
 }
