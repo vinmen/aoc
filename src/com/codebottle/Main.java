@@ -6,6 +6,10 @@ public class Main {
 		AOC aoc = new AOC();
 		aoc.year = "2015";
 		aoc.run();
+		
+		aoc = new AOC();
+		aoc.year = "2023";
+		aoc.run();
 	}
 
 }

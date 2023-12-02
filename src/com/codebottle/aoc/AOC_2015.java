@@ -2,7 +2,6 @@ package com.codebottle.aoc;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.*;
 import java.security.*;
 import java.math.BigInteger;
@@ -37,7 +36,8 @@ public class AOC_2015 {
 		// day3();
 		// day4();
 		//day5();
-		day6();
+		//day6();
+		day7();
 	}
 
 	public void day1() {
@@ -395,5 +395,93 @@ public class AOC_2015 {
 			System.out.println("Error occured::" + e.getMessage());
 		}
 	}
+	
+	public void day7() {
+	try {
+		String out_1 = "";
+		String out_2 = "";
+		String input_file = System.getProperty("user.dir") + "\\bin\\input\\2015\\day7.txt";
+		List<String> inputs = Files.readAllLines(Paths.get(input_file));
+		
+		Map<String, String> wires = new HashMap<>();
+		List<String[]> circuits = new ArrayList<String[]>();
+		
+		/*
+		    af AND ah -> ai--
+		    fm OR fn -> fo--
+			NOT lk -> ll
+			hz RSHIFT 1 -> is--
+			eo LSHIFT 15 -> es--
+			0 -> c
+            14146 -> b
+		 * 
+		 * 
+		 * 
+		 */
+		String input1;
+		String input2;
+		String operand;
+		String output;
+		String value;
+		String temp;
+		String[] temp_wires;
+		
+		for (String s : inputs) {	
+						
+			if(s.contains("AND") || s.contains("OR") || s.contains("RSHIFT") || s.contains("LSHIFT")) {
+				temp = s.replace(" AND ", ",").replace(" OR ", ",").replace(" RSHIFT ", ",").replace(" LSHIFT ", ",").replace(" -> ", ",");
+				temp_wires = temp.split(",");
+				
+				wires.put(temp_wires[0], "-1");
+				wires.put(temp_wires[2], "-1");	
+				
+				if(s.contains("AND") || s.contains("OR"))
+					wires.put(temp_wires[1], "-1");	
+				
+				if(s.contains("AND"))
+					circuits.add(new String[] {"&", temp_wires[0], temp_wires[1], temp_wires[2], "-1"});
+				else if(s.contains("OR"))
+					circuits.add(new String[] {"|", temp_wires[0], temp_wires[1], temp_wires[2], "-1"});
+				else if(s.contains("RSHIFT"))
+					circuits.add(new String[] {">>", temp_wires[0], temp_wires[1], temp_wires[2], "-1"});
+				else if(s.contains("LSHIFT"))
+					circuits.add(new String[] {"<<", temp_wires[0], temp_wires[1], temp_wires[2], "-1"});
+			}
+			else if(s.contains("NOT")) {
+				temp = s.replace("NOT ", "").replace(" -> ", ",");
+				temp_wires = temp.split(",");
+				
+				wires.put(temp_wires[0], "-1");
+				wires.put(temp_wires[1], "-1");
+				
+				circuits.add(new String[] {"~", temp_wires[0], "", temp_wires[1], "-1"});
+			}
+			else {
+				temp = s.replace(" -> ", ",");
+				temp_wires = temp.split(",");	
+				
+				wires.put(temp_wires[0], "-1");
+				wires.put(temp_wires[1], "-1");
+				
+				circuits.add(new String[] {"=", temp_wires[0], "", temp_wires[1], "-1"});
+			}
+		}
+		
+//		while(wires.get("a").equals("-1")) {
+//			for (String[] arr : circuits) {
+//				if(arr[4].equals("-1")) {
+//					
+//				}
+//			}
+//		}
+		
+
+		out_1 = String.valueOf(0);
+		out_2 = String.valueOf(0);
+		System.out.println("Day7 :: " + out_1 + " :: " + out_2);
+	} catch (Exception e) {
+		System.out.println("Error occured::" + e.getMessage());
+	}
+}
 	
 }
