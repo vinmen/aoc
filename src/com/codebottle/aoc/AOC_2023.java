@@ -11,6 +11,7 @@ public class AOC_2023 {
 	public void run() {
 		day1();	
 		day2();
+		day3();
 	}
 	
 	public void day1() {
@@ -145,6 +146,34 @@ public class AOC_2023 {
 			out_2 = String.valueOf(total2);
 			
 			System.out.println("Day2 :: " + out_1 + " :: " + out_2);
+			
+		} catch (Exception e) {
+			System.out.println("Error occured::" + e.getMessage());
+		}
+	}
+	
+	public void day3() {
+		
+		try {
+			String out_1 = "";
+			String out_2 = "";
+			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day3.txt";
+			List<String> inputs = Files.readAllLines(Paths.get(input_file));		
+			
+			int rows = inputs.get(0).length();
+			int cols = inputs.size();
+			
+			char[][] data = new char[rows][cols];
+			
+			for(int i = 0; i < rows; i++) {
+				for(int j = 0; j < cols; j++) {
+					data[i][j] = inputs.get(i).charAt(j);
+				}
+			}
+	
+			out_1 = String.valueOf(0);
+			out_2 = String.valueOf(0);
+			System.out.println("Day1 :: " + out_1 + " :: " + out_2);
 			
 		} catch (Exception e) {
 			System.out.println("Error occured::" + e.getMessage());
