@@ -3,14 +3,16 @@ package com.codebottle.aoc;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AOC_2023 {
 	
 	public AOC_2023() {}
 	
 	public void run() {
-		day1();	
-		day2();
+		//day1();	
+		//day2();
 		day3();
 	}
 	
@@ -158,26 +160,75 @@ public class AOC_2023 {
 			String out_1 = "";
 			String out_2 = "";
 			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day3.txt";
-			List<String> inputs = Files.readAllLines(Paths.get(input_file));		
+			List<String> inputs = Files.readAllLines(Paths.get(input_file));
 			
-			int rows = inputs.get(0).length();
-			int cols = inputs.size();
+			int total = 0;
+			Pattern pattern = Pattern.compile("\\d+");			
 			
-			char[][] data = new char[rows][cols];
-			
-			for(int i = 0; i < rows; i++) {
-				for(int j = 0; j < cols; j++) {
-					data[i][j] = inputs.get(i).charAt(j);
+			for(int i = 0; i < inputs.size(); i++) {
+				//System.out.println(inputs.get(i));
+				Matcher match = pattern.matcher(inputs.get(i));
+				while(match.find()) {
+					//System.out.println(match.group() + "::" + match.start() + "::" + (match.end() - 1));
+					
+					String line = inputs.get(i);
+					String prev_line = "";
+					String next_line = "";
+					
+					if(i > 0) {
+						prev_line = inputs.get(i - 1);
+					}
+					
+					if(i < inputs.size() - 1) {
+						next_line = inputs.get(i + 1);
+					}					
+					
+					if(day3_check(line, prev_line, next_line, match.start(), match.end() - 1)) {						
+						total = total + Integer.parseInt(match.group());
+					}					
 				}
-			}
+			}	
 	
-			out_1 = String.valueOf(0);
+			out_1 = String.valueOf(total);
 			out_2 = String.valueOf(0);
-			System.out.println("Day1 :: " + out_1 + " :: " + out_2);
+			System.out.println("Day3 :: " + out_1 + " :: " + out_2);
 			
 		} catch (Exception e) {
 			System.out.println("Error occured::" + e.getMessage());
 		}
+	}
+	
+	public boolean day3_check(String line, String prev_line, String next_line, int start_index, int end_index) {		
+		
+		if(start_index > 0 && line.charAt(start_index - 1) != '.')
+			return true;		
+		
+		if(end_index < line.length() - 1 && line.charAt(end_index + 1) != '.')
+			return true;		
+		
+		int left_index = start_index - 1;		
+		if(start_index == 0)
+			left_index = 0;
+		
+		int right_index = end_index + 1;		
+		if(end_index == line.length() - 1)
+			right_index = line.length() - 1;		
+		
+		if(! prev_line.equals("")) {
+			for(int x = left_index; x <= right_index; x++) {
+				if(prev_line.charAt(x) != '.')
+					return true;
+			}				
+		}
+		
+		if(! next_line.equals("")) {
+			for(int x = left_index; x <= right_index; x++) {
+				if(next_line.charAt(x) != '.')
+					return true;
+			}				
+		}
+		
+		return false;
 	}
 	
 }
