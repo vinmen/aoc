@@ -161,6 +161,7 @@ public class AOC_2023 {
 			String out_2 = "";
 			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day3.txt";
 			List<String> inputs = Files.readAllLines(Paths.get(input_file));
+			Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
 			
 			int total = 0;
 			Pattern pattern = Pattern.compile("\\d+");			
@@ -183,14 +184,25 @@ public class AOC_2023 {
 						next_line = inputs.get(i + 1);
 					}					
 					
-					if(day3_check(line, prev_line, next_line, match.start(), match.end() - 1)) {						
+					if(day3_part1_helper(line, prev_line, next_line, match.start(), match.end() - 1)) {						
 						total = total + Integer.parseInt(match.group());
-					}					
+					}
+					
+					day3_part2_helper(line, prev_line, next_line, i, 
+							Integer.parseInt(match.group()), match.start(), match.end() - 1, map);
 				}
 			}	
 	
 			out_1 = String.valueOf(total);
-			out_2 = String.valueOf(0);
+			
+			int total2 = 0;
+			for(String s : map.keySet()) {
+				if(map.get(s).size() > 1) {
+					total2 = total2 + (map.get(s).get(0) * map.get(s).get(1));
+				}
+			}
+			
+			out_2 = String.valueOf(total2);
 			System.out.println("Day3 :: " + out_1 + " :: " + out_2);
 			
 		} catch (Exception e) {
@@ -198,7 +210,7 @@ public class AOC_2023 {
 		}
 	}
 	
-	public boolean day3_check(String line, String prev_line, String next_line, int start_index, int end_index) {		
+	public boolean day3_part1_helper(String line, String prev_line, String next_line, int start_index, int end_index) {		
 		
 		if(start_index > 0 && line.charAt(start_index - 1) != '.')
 			return true;		
@@ -229,6 +241,52 @@ public class AOC_2023 {
 		}
 		
 		return false;
+	}
+	
+	public void day3_part2_helper(String line, String prev_line, String next_line, 
+			int line_index, int number, int start_index, int end_index, Map<String, List<Integer>> map) {		
+		
+		String key = "";
+		
+		if(start_index > 0 && line.charAt(start_index - 1) == '*')
+			key =  String.valueOf(line_index) + "," + String.valueOf(start_index - 1);							
+		
+		if(end_index < line.length() - 1 && line.charAt(end_index + 1) == '*')
+			key = String.valueOf(line_index) + "," + String.valueOf(end_index + 1);		
+		
+		int left_index = start_index - 1;		
+		if(start_index == 0)
+			left_index = 0;
+		
+		int right_index = end_index + 1;		
+		if(end_index == line.length() - 1)
+			right_index = line.length() - 1;		
+		
+		if(! prev_line.equals("")) {
+			for(int x = left_index; x <= right_index; x++) {
+				if(prev_line.charAt(x) == '*')
+					key = String.valueOf(line_index - 1) + "," + String.valueOf(x);
+			}				
+		}
+		
+		if(! next_line.equals("")) {
+			for(int x = left_index; x <= right_index; x++) {
+				if(next_line.charAt(x) != '.')
+					key = String.valueOf(line_index + 1) + "," + String.valueOf(x);
+			}				
+		}
+		
+		if(!key.equals("")) {						
+			if(map.containsKey(key)) {
+				map.get(key).add(number);
+			}
+			else {
+				List<Integer> data = new ArrayList<Integer>();
+				data.add(number);
+				map.put(key, data);
+			}
+		}
+		
 	}
 	
 }
