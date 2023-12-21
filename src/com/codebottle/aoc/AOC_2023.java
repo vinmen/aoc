@@ -13,7 +13,8 @@ public class AOC_2023 {
 	public void run() {
 		//day1();	
 		//day2();
-		day3();
+		//day3();
+		day4();
 	}
 	
 	public void day1() {
@@ -287,6 +288,43 @@ public class AOC_2023 {
 			}
 		}
 		
+	}
+	
+	public void day4() {
+
+		try {
+			String out_1 = "";
+			String out_2 = "";
+			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day4.txt";
+			List<String> inputs = Files.readAllLines(Paths.get(input_file));	
+						
+			int total = 0;	
+			int total2 = 0;
+			
+			for (String s : inputs) {
+				
+				s = s.substring(s.indexOf(":") + 2);
+				String[] temp = s.split(" \\| ");
+				List<String> winners = Arrays.asList(temp[0].replace("  ", " ").split(" "));
+				List<String> numbers = Arrays.asList(temp[1].replace("  ", " ").split(" "));
+				int win_count = 0;
+				
+				for(String num : numbers) {
+					if(winners.contains(num))
+						win_count++;					
+				}
+				
+				if(win_count > 0)
+					total = total + (int) Math.pow(2, win_count - 1);
+			}			
+
+			out_1 = String.valueOf(total);
+			out_2 = String.valueOf(total2);
+			System.out.println("Day4 :: " + out_1 + " :: " + out_2);
+			
+		} catch (Exception e) {
+			System.out.println("Error occured::" + e.getMessage());
+		}
 	}
 	
 }
