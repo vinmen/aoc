@@ -13,7 +13,8 @@ public class AOC_2023 {
 	public void run() {
 		//day1();	
 		//day2();
-		day3();
+		//day3();
+		day4();
 	}
 	
 	public void day1() {
@@ -287,6 +288,81 @@ public class AOC_2023 {
 			}
 		}
 		
+	}
+	
+	public void day4() {
+
+		try {
+			String out_1 = "";
+			String out_2 = "";
+			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day4.txt";
+			List<String> inputs = Files.readAllLines(Paths.get(input_file));			
+			
+			int total = 0;		
+			for (String s : inputs) {
+				
+				s = s.substring(s.indexOf(":") + 2);
+				String[] temp = s.split(" \\| ");
+				List<String> winners = Arrays.asList(temp[0].replace("  ", " ").split(" "));
+				List<String> numbers = Arrays.asList(temp[1].replace("  ", " ").split(" "));
+				int win_count = 0;
+				
+				for(String num : numbers) {
+					if(winners.contains(num))
+						win_count++;					
+				}
+				
+				if(win_count > 0)
+					total = total + (int) Math.pow(2, win_count - 1);	
+			}			
+
+			out_1 = String.valueOf(total);
+			
+			int total2 = 0;
+			int card_number = 0;
+			Pattern pattern = Pattern.compile("\\d+");
+			Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+			for(int i = 0; i < inputs.size(); i++) {
+				map.put(i + 1, 1);
+			}
+			
+			for (String s : inputs) {
+				
+				Matcher m = pattern.matcher(s.substring(0, s.indexOf(":")));	
+				while (m.find()) {
+					card_number = Integer.valueOf(m.group());
+				}	
+				
+				s = s.substring(s.indexOf(":") + 2);
+				String[] temp = s.split(" \\| ");
+				List<String> winners = Arrays.asList(temp[0].replace("  ", " ").split(" "));
+				List<String> numbers = Arrays.asList(temp[1].replace("  ", " ").split(" "));
+				int win_count = 0;
+				
+				for(String num : numbers) {
+					if(winners.contains(num))
+						win_count++;					
+				}
+				
+				if(win_count > 0 || card_number < map.size()) {
+					for(int j = 0; j < map.get(card_number); j++) {
+						for(int i = 1; i <= win_count; i++) {
+							map.put(card_number + i, map.get(card_number + i) + 1);
+						}
+					}
+				}					
+			}
+			
+			for(Integer count : map.values()) {
+				total2 = total2 + count;
+			}
+			
+			out_2 = String.valueOf(total2);
+			System.out.println("Day4 :: " + out_1 + " :: " + out_2);
+			
+		} catch (Exception e) {
+			System.out.println("Error occured::" + e.getMessage());
+		}
 	}
 	
 }
