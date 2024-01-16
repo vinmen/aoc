@@ -14,7 +14,9 @@ public class AOC_2023 {
 		//day1();	
 		//day2();
 		//day3();
-		day4();
+		//day4();
+		day5();
+		//day5_part2();		
 	}
 	
 	public void day1() {
@@ -365,4 +367,504 @@ public class AOC_2023 {
 		}
 	}
 	
+	public void day5() {
+
+		try {
+			String out_1 = "";
+			String out_2 = "";
+			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day5.txt";
+			List<String> inputs = Files.readAllLines(Paths.get(input_file));			
+			
+			Pattern pattern = Pattern.compile("\\d+");
+			
+			List<Long> seeds = new ArrayList<Long>();			
+			Map<Long, Long[]> seed_soil = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> soil_fertilizer = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> fertilizer_water = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> water_light = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> light_temperature = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> temperature_humidity = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> humidity_location = new HashMap<Long, Long[]>();			
+			
+			boolean seed_soil_flag = false;
+			boolean soil_fertilizer_flag = false;
+			boolean fertilizer_water_flag = false;
+			boolean water_light_flag = false;
+			boolean light_temperature_flag = false;
+			boolean temperature_humidity_flag = false;
+			boolean humidity_location_flag = false;
+						
+			for (String s : inputs) {
+				
+				if(s.equals("")) {
+					seed_soil_flag = false;
+					soil_fertilizer_flag = false;
+					fertilizer_water_flag = false;
+					water_light_flag = false;
+					light_temperature_flag = false;
+					temperature_humidity_flag = false;
+					humidity_location_flag = false;
+				}
+				
+				if (s.contains("seeds:")) {
+					Matcher m = pattern.matcher(s);
+					while (m.find()) {
+						seeds.add(Long.valueOf(m.group()));
+					}
+					continue;
+				}
+
+				if (s.contains("seed-to-soil")) {
+					seed_soil_flag = true;
+					continue;
+				}
+
+				if (seed_soil_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					seed_soil.put(Long.valueOf(temp[1]), temp_arr);
+				}				
+				
+				if (s.contains("soil-to-fertilizer")) {
+					soil_fertilizer_flag = true;
+					continue;
+				}
+				
+				if (soil_fertilizer_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					soil_fertilizer.put(Long.valueOf(temp[1]), temp_arr);
+				}			
+				
+				if (s.contains("fertilizer-to-water")) {
+					fertilizer_water_flag = true;
+					continue;
+				}
+				
+				if (fertilizer_water_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					fertilizer_water.put(Long.valueOf(temp[1]), temp_arr);
+				}				
+				
+				if (s.contains("water-to-light")) {
+					water_light_flag = true;
+					continue;
+				}
+				
+				if (water_light_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					water_light.put(Long.valueOf(temp[1]), temp_arr);
+				}				
+				
+				if (s.contains("light-to-temperature")) {
+					light_temperature_flag = true;
+					continue;
+				}
+				
+				if (light_temperature_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					light_temperature.put(Long.valueOf(temp[1]), temp_arr);
+				}				
+				
+				if (s.contains("temperature-to-humidity")) {
+					temperature_humidity_flag = true;
+					continue;
+				}
+				
+				if (temperature_humidity_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					temperature_humidity.put(Long.valueOf(temp[1]), temp_arr);
+				}				
+				
+				if (s.contains("humidity-to-location")) {
+					humidity_location_flag = true;
+					continue;
+				}
+				
+				if (humidity_location_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[0]), Long.valueOf(temp[2]) };
+					humidity_location.put(Long.valueOf(temp[1]), temp_arr);
+				}
+			}
+			
+			Long min_location1 = Long.MAX_VALUE;			
+			for(Long seed : seeds) {
+				
+				Long soil = day5_helper1(seed, seed_soil);
+				Long fertilizer = day5_helper1(soil, soil_fertilizer);
+				Long water = day5_helper1(fertilizer, fertilizer_water);
+				Long light = day5_helper1(water, water_light);
+				Long temperature = day5_helper1(light, light_temperature);
+				Long humidity = day5_helper1(temperature, temperature_humidity);
+				Long location = day5_helper1(humidity, humidity_location);	
+				
+				if(location < min_location1) {
+					min_location1 = location;
+				}
+			}
+			out_1 = String.valueOf(min_location1);			
+			
+			// ************************************************************************************
+			
+			seed_soil = new HashMap<Long, Long[]>();
+			soil_fertilizer = new HashMap<Long, Long[]>();
+			fertilizer_water = new HashMap<Long, Long[]>();
+			water_light = new HashMap<Long, Long[]>();
+			light_temperature = new HashMap<Long, Long[]>();
+			temperature_humidity = new HashMap<Long, Long[]>();
+			humidity_location = new HashMap<Long, Long[]>();			
+			
+			seed_soil_flag = false;
+			soil_fertilizer_flag = false;
+			fertilizer_water_flag = false;
+			water_light_flag = false;
+			light_temperature_flag = false;
+			temperature_humidity_flag = false;
+			humidity_location_flag = false;	
+			
+			Map<Long, Long> seeds2 = new HashMap<Long, Long>();	
+			
+			for (String s : inputs) {
+				
+				if(s.equals("")) {
+					seed_soil_flag = false;
+					soil_fertilizer_flag = false;
+					fertilizer_water_flag = false;
+					water_light_flag = false;
+					light_temperature_flag = false;
+					temperature_humidity_flag = false;
+					humidity_location_flag = false;
+					
+					continue;
+				}
+				
+				if (s.contains("seeds:")) {
+					s = s.replace("seeds: ", "");
+					String[] temp = s.split(" ");
+					for(int i = 0; i < temp.length - 1; i = i + 2) {
+						seeds2.put(Long.valueOf(temp[i]), Long.valueOf(temp[i + 1]));
+					}
+					continue;
+				}
+
+				if (s.contains("seed-to-soil")) {
+					seed_soil_flag = true;
+					continue;
+				}
+
+				if (seed_soil_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					seed_soil.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("soil-to-fertilizer")) {
+					soil_fertilizer_flag = true;
+					continue;
+				}
+				
+				if (soil_fertilizer_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					soil_fertilizer.put(Long.valueOf(temp[0]), temp_arr);
+				}			
+				
+				if (s.contains("fertilizer-to-water")) {
+					fertilizer_water_flag = true;
+					continue;
+				}
+				
+				if (fertilizer_water_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					fertilizer_water.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("water-to-light")) {
+					water_light_flag = true;
+					continue;
+				}
+				
+				if (water_light_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					water_light.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("light-to-temperature")) {
+					light_temperature_flag = true;
+					continue;
+				}
+				
+				if (light_temperature_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					light_temperature.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("temperature-to-humidity")) {
+					temperature_humidity_flag = true;
+					continue;
+				}
+				
+				if (temperature_humidity_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					temperature_humidity.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("humidity-to-location")) {
+					humidity_location_flag = true;
+					continue;
+				}
+				
+				if (humidity_location_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					humidity_location.put(Long.valueOf(temp[0]), temp_arr);
+				}		
+
+			}
+			
+			Long min_location2 = Long.MAX_VALUE;						
+			Long max_location = Long.MIN_VALUE;
+			
+			for(Long loc : humidity_location.keySet()) {
+				if(max_location < loc + humidity_location.get(loc)[1]) {
+					max_location = loc + humidity_location.get(loc)[1];
+				}
+			}
+			
+			for(Long location = 0L; location < max_location; location++) {
+				
+				Long humidity = day5_helper2(location, humidity_location);
+				Long temperature = day5_helper2(humidity, temperature_humidity);
+				Long light = day5_helper2(temperature, light_temperature);
+				Long water = day5_helper2(light, water_light);
+				Long fertilizer = day5_helper2(water, fertilizer_water);
+				Long soil = day5_helper2(fertilizer, soil_fertilizer);
+				Long seed = day5_helper2(soil, seed_soil);
+				
+				for(Long seed2: seeds2.keySet()) {
+					if(seed >= seed2 && seed < seed2 + seeds2.get(seed2)) {
+						min_location2 = location;
+						break;
+					}
+				}
+				
+				if(min_location2 < Long.MAX_VALUE) {
+					break;
+				}				
+			}	
+			
+			out_2 = String.valueOf(min_location2);
+			
+			System.out.println("Day5 :: " + out_1 + " :: " + out_2);
+			
+		} catch (Exception e) {
+			System.out.println("Error occured::" + e.getMessage());
+		}
+	}
+	
+	public Long day5_helper1(Long input, Map<Long, Long[]> map) {		
+		for(Long key: map.keySet()) {
+			if(input == key) {
+				return map.get(key)[0];
+			}
+			else if(input > key && input < (key + map.get(key)[1]) ) {
+				return map.get(key)[0] + (input - key);
+			}
+		}
+		
+		return input;
+	}	
+	
+	public void day5_part2() {
+
+		try {
+			String out_1 = "";
+			String out_2 = "";
+			String input_file = System.getProperty("user.dir") + "\\bin\\input\\2023\\day5.txt";
+			List<String> inputs = Files.readAllLines(Paths.get(input_file));
+					
+			Map<Long, Long[]> seed_soil = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> soil_fertilizer = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> fertilizer_water = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> water_light = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> light_temperature = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> temperature_humidity = new HashMap<Long, Long[]>();
+			Map<Long, Long[]> humidity_location = new HashMap<Long, Long[]>();			
+			
+			boolean seed_soil_flag = false;
+			boolean soil_fertilizer_flag = false;
+			boolean fertilizer_water_flag = false;
+			boolean water_light_flag = false;
+			boolean light_temperature_flag = false;
+			boolean temperature_humidity_flag = false;
+			boolean humidity_location_flag = false;	
+			
+			Map<Long, Long> seeds2 = new HashMap<Long, Long>();	
+			
+			for (String s : inputs) {
+				
+				if(s.equals("")) {
+					seed_soil_flag = false;
+					soil_fertilizer_flag = false;
+					fertilizer_water_flag = false;
+					water_light_flag = false;
+					light_temperature_flag = false;
+					temperature_humidity_flag = false;
+					humidity_location_flag = false;
+					
+					continue;
+				}
+				
+				if (s.contains("seeds:")) {
+					s = s.replace("seeds: ", "");
+					String[] temp = s.split(" ");
+					for(int i = 0; i < temp.length - 1; i = i + 2) {
+						seeds2.put(Long.valueOf(temp[i]), Long.valueOf(temp[i + 1]));
+					}
+					continue;
+				}
+
+				if (s.contains("seed-to-soil")) {
+					seed_soil_flag = true;
+					continue;
+				}
+
+				if (seed_soil_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					seed_soil.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("soil-to-fertilizer")) {
+					soil_fertilizer_flag = true;
+					continue;
+				}
+				
+				if (soil_fertilizer_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					soil_fertilizer.put(Long.valueOf(temp[0]), temp_arr);
+				}			
+				
+				if (s.contains("fertilizer-to-water")) {
+					fertilizer_water_flag = true;
+					continue;
+				}
+				
+				if (fertilizer_water_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					fertilizer_water.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("water-to-light")) {
+					water_light_flag = true;
+					continue;
+				}
+				
+				if (water_light_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					water_light.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("light-to-temperature")) {
+					light_temperature_flag = true;
+					continue;
+				}
+				
+				if (light_temperature_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					light_temperature.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("temperature-to-humidity")) {
+					temperature_humidity_flag = true;
+					continue;
+				}
+				
+				if (temperature_humidity_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					temperature_humidity.put(Long.valueOf(temp[0]), temp_arr);
+				}				
+				
+				if (s.contains("humidity-to-location")) {
+					humidity_location_flag = true;
+					continue;
+				}
+				
+				if (humidity_location_flag == true) {
+					String[] temp = s.split(" ");
+					Long[] temp_arr = { Long.valueOf(temp[1]), Long.valueOf(temp[2]) };
+					humidity_location.put(Long.valueOf(temp[0]), temp_arr);
+				}		
+
+			}
+			
+			Long min_location2 = Long.MAX_VALUE;						
+			Long max_location = Long.MIN_VALUE;
+			
+			for(Long loc : humidity_location.keySet()) {
+				if(max_location < loc + humidity_location.get(loc)[1]) {
+					max_location = loc + humidity_location.get(loc)[1];
+				}
+			}
+			
+			for(Long location = 0L; location < max_location; location++) {
+				
+				Long humidity = day5_helper2(location, humidity_location);
+				Long temperature = day5_helper2(humidity, temperature_humidity);
+				Long light = day5_helper2(temperature, light_temperature);
+				Long water = day5_helper2(light, water_light);
+				Long fertilizer = day5_helper2(water, fertilizer_water);
+				Long soil = day5_helper2(fertilizer, soil_fertilizer);
+				Long seed = day5_helper2(soil, seed_soil);
+				
+				System.out.println("seed:" + seed + " soil:" + soil + " fertilizer:" + fertilizer + " water:" + water + " light:" + light + " temperature:" + temperature + " humidity:" + humidity + " location:" + location);
+				
+				for(Long seed2: seeds2.keySet()) {
+					if(seed >= seed2 && seed < seed2 + seeds2.get(seed2)) {
+						min_location2 = location;
+						break;
+					}
+				}
+				
+				if(min_location2 < Long.MAX_VALUE) {
+					break;
+				}				
+			}	
+			
+			out_2 = String.valueOf(min_location2);
+			
+			System.out.println("Day5 :: " + out_1 + " :: " + out_2);
+			
+		} catch (Exception e) {
+			System.out.println("Error occured::" + e.getMessage());
+		}
+	}
+	
+	public Long day5_helper2(Long input, Map<Long, Long[]> map) {		
+		for(Long key: map.keySet()) {
+			if(key == input) {				
+				return map.get(key)[0];
+			}
+			else if(key < input && (key + map.get(key)[1]) > input ) {				
+				return map.get(key)[0] + (input - key);
+			}
+		}
+		
+		return input;
+	}
+
 }
